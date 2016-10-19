@@ -3,6 +3,7 @@ package main;
 import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Graphics;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -39,17 +40,20 @@ import javax.swing.JFileChooser;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JLabel;
+import javax.swing.JProgressBar;
 
 
 
 public class MainApp {
 
 	private JFrame frame;
-	private JTextField textField;
 	
 	//Create global labels to set after click events
 	JLabel lbl_setMeta_sourceFolder = new JLabel("");
 	JLabel lbl_setMeta_resultfolder = new JLabel("");
+	JLabel lbl_setFile_sourceFolder = new JLabel("");
+	JLabel lbl_setFile_resultFolder = new JLabel("");
+	
 	private JTextField tf_setMeta_album;
 	private JTextField tf_setMeta_year;
 	private JTextField tf_setMeta_genre;
@@ -86,7 +90,7 @@ public class MainApp {
 	private void initialize() {
 		
 		frame = new JFrame();
-		frame.setBounds(100, 100, 700, 297);
+		frame.setBounds(100, 100, 700, 325);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(new CardLayout(0, 0));
 		
@@ -97,7 +101,7 @@ public class MainApp {
 		tabbedPane.addTab("Set metaData", null, setMeta, null);
 		setMeta.setLayout(null);		
 		
-		//BTN select source folder
+		//BTN select source folder in meta
 		JButton btn_setMeta_sourceFolder = new JButton("Source folder");
 		btn_setMeta_sourceFolder.setBounds(12, 12, 109, 31);
 		setMeta.add(btn_setMeta_sourceFolder);
@@ -111,7 +115,7 @@ public class MainApp {
 		lbl_setMeta_sourceFolder.setBounds(133, 16, 532, 21);
 		setMeta.add(lbl_setMeta_sourceFolder);
 		
-		//BTN select result folder
+		//BTN select result folder in meta
 		JButton btn_setMeta_resultFolder = new JButton("Result folder");		
 		btn_setMeta_resultFolder.setBounds(12, 56, 109, 31);
 		setMeta.add(btn_setMeta_resultFolder);
@@ -124,9 +128,9 @@ public class MainApp {
 		lbl_setMeta_resultfolder.setBounds(133, 63, 532, 21);
 		setMeta.add(lbl_setMeta_resultfolder);
 		
-		//BTN RUN
+		//BTN RUN in meta
 		JButton btn_setMeta_run = new JButton("Run");
-		btn_setMeta_run.setBounds(556, 176, 109, 31);
+		btn_setMeta_run.setBounds(556, 204, 109, 31);
 		setMeta.add(btn_setMeta_run);
 		btn_setMeta_run.addActionListener(new ActionListener() {			
 			public void actionPerformed(ActionEvent arg0) {
@@ -136,7 +140,7 @@ public class MainApp {
 				String year = "";
 				String genre = "";
 				
-				if(sourceFolder != "" || resultFolder != ""){
+				if(sourceFolder != "" && resultFolder != ""){
 					if(!tf_setMeta_year.getText().trim().isEmpty()){
 						if(isNumeric(tf_setMeta_year.getText().trim())){
 							if(Integer.parseInt(tf_setMeta_year.getText().trim()) > 0 && Integer.parseInt(tf_setMeta_year.getText().trim()) < 9999){
@@ -154,7 +158,8 @@ public class MainApp {
 					try {
 						album = tf_setMeta_album.getText().trim();
 						genre = tf_setMeta_genre.getText().trim();
-						backend.getFiles(sourceFolder, resultFolder, album, year, genre);
+						backend.setMetaData(sourceFolder, resultFolder, album, year, genre);
+						JOptionPane.showMessageDialog(frame, "Complete");
 					} catch (BaseException e) {
 						JOptionPane.showMessageDialog(frame, e.getMessage());
 						e.printStackTrace();
@@ -203,14 +208,63 @@ public class MainApp {
 		tabbedPane.addTab("Set file name", null, setFileName, null);
 		setFileName.setLayout(null);
 		
-		JButton button = new JButton("New button");
-		button.setBounds(200, 81, 219, 51);
-		setFileName.add(button);	 
+		//BTN select source folder in file
+		JButton btn_setFile_sourceFolder = new JButton("Source folder");
+		btn_setFile_sourceFolder.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				lbl_setFile_sourceFolder.setText(fileChooser());
+			}
+		});
+		btn_setFile_sourceFolder.setBounds(12, 13, 109, 31);
+		setFileName.add(btn_setFile_sourceFolder);
 		
-		textField = new JTextField();
-		textField.setBounds(49, 144, 116, 22);
-		setFileName.add(textField);
-		textField.setColumns(10);
+		lbl_setFile_sourceFolder.setBounds(133, 17, 532, 21);
+		setFileName.add(lbl_setFile_sourceFolder);
+		
+		//BTN select result folder in file
+		JButton btn_setFile_ResultFolder = new JButton("Result folder");
+		btn_setFile_ResultFolder.setBounds(12, 57, 109, 31);
+		setFileName.add(btn_setFile_ResultFolder);
+		btn_setFile_ResultFolder.addActionListener(new ActionListener() {			
+			public void actionPerformed(ActionEvent arg0) {
+				lbl_setFile_resultFolder.setText(fileChooser());				
+			}
+		});
+		
+		lbl_setFile_resultFolder.setBounds(133, 64, 532, 21);
+		setFileName.add(lbl_setFile_resultFolder);
+		
+		//BTN Run in file
+		JButton btn_setFile_run = new JButton("Run");
+		btn_setFile_run.setBounds(556, 204, 109, 31);
+		setFileName.add(btn_setFile_run);
+		btn_setFile_run.addActionListener(new ActionListener() {			
+			public void actionPerformed(ActionEvent arg0) {
+				String sourceFolder = lbl_setFile_sourceFolder.getText().trim() +"/";
+				String resultFolder = lbl_setFile_resultFolder.getText().trim() +"/";
+				
+				if(sourceFolder != "" && resultFolder != ""){					
+					BackEnd backend  = new BackEnd();
+					try {
+						backend.setFileNames(sourceFolder, resultFolder);
+						JOptionPane.showMessageDialog(frame, "Complete");
+					} catch (BaseException e) {
+						JOptionPane.showMessageDialog(frame, e.getMessage());
+						e.printStackTrace();
+					} catch (IOException e) {
+						JOptionPane.showMessageDialog(frame, e.getMessage());
+						e.printStackTrace();
+					} catch (Exception e) {
+						JOptionPane.showMessageDialog(frame, e.getMessage());
+						e.printStackTrace();
+					}			
+					
+				}else{
+					JOptionPane.showMessageDialog(frame, "Please select source and result folder");
+				}	
+				
+			}
+		});
 	}	   
 	
 	
@@ -241,6 +295,5 @@ public class MainApp {
 	    return false;  
 	  }  
 	  return true;  
-	}
-	
+	}	
 }
