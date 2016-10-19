@@ -29,6 +29,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JLayeredPane;
+import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
 import javax.swing.JDesktopPane;
 import javax.swing.JTabbedPane;
@@ -65,10 +66,6 @@ public class MainApp {
 					MainApp window = new MainApp();					
 					window.frame.setVisible(true);
 					
-					BackEnd backend  = new BackEnd();
-					
-					backend.getFiles("C:/Users/Diego/Music/", "C:/Users/Diego/Music/Results/");			
-										
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -87,6 +84,7 @@ public class MainApp {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		
 		frame = new JFrame();
 		frame.setBounds(100, 100, 700, 297);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -126,9 +124,51 @@ public class MainApp {
 		lbl_setMeta_resultfolder.setBounds(133, 63, 532, 21);
 		setMeta.add(lbl_setMeta_resultfolder);
 		
+		//BTN RUN
 		JButton btn_setMeta_run = new JButton("Run");
 		btn_setMeta_run.setBounds(556, 176, 109, 31);
 		setMeta.add(btn_setMeta_run);
+		btn_setMeta_run.addActionListener(new ActionListener() {			
+			public void actionPerformed(ActionEvent arg0) {
+				String sourceFolder = lbl_setMeta_sourceFolder.getText().trim() +"/";
+				String resultFolder = lbl_setMeta_resultfolder.getText().trim() +"/";
+				String album = "";
+				int year = 0;
+				String genre = "";
+				
+				if(sourceFolder != "" || resultFolder != ""){
+					if(!tf_setMeta_year.getText().trim().isEmpty()){
+						if(isNumeric(tf_setMeta_year.getText().trim())){
+							if(Integer.parseInt(tf_setMeta_year.getText().trim()) > 0 && Integer.parseInt(tf_setMeta_year.getText().trim()) < 9999){
+								year = Integer.parseInt(tf_setMeta_year.getText().trim());
+							}else{
+								JOptionPane.showMessageDialog(frame, "Please correct the year");
+							}
+						}else{
+							JOptionPane.showMessageDialog(frame, "Please correct the year");
+						}
+					}else{
+						year = 0;
+					}
+					BackEnd backend  = new BackEnd();
+					try {
+						backend.getFiles(sourceFolder, resultFolder, album, year, genre);
+					} catch (BaseException e) {
+						JOptionPane.showMessageDialog(frame, e.getMessage());
+						e.printStackTrace();
+					} catch (IOException e) {
+						JOptionPane.showMessageDialog(frame, e.getMessage());
+						e.printStackTrace();
+					} catch (Exception e) {
+						JOptionPane.showMessageDialog(frame, e.getMessage());
+						e.printStackTrace();
+					}			
+					
+				}else{
+					JOptionPane.showMessageDialog(frame, "Please select source and result folder");
+				}				
+			}
+		});
 		
 		JLabel lbl_setMeta_album = new JLabel("Album name:");
 		lbl_setMeta_album.setBounds(12, 98, 109, 21);
@@ -188,9 +228,18 @@ public class MainApp {
 	      //System.out.println("getCurrentDirectory(): " +  chooser.getCurrentDirectory());
 	      //System.out.println("getSelectedFile() : " +  chooser.getSelectedFile());
 	      return chooser.getSelectedFile().toString();
-	      }
-	    else {
+	    }else {
 	    	return "No selection";
-	      }
-	     }
+	    }
+	}
+	
+	public static boolean isNumeric(String str){  
+	  try{  
+	    double i = Integer.parseInt(str);  
+	  }catch(NumberFormatException nfe){  
+	    return false;  
+	  }  
+	  return true;  
+	}
+	
 }

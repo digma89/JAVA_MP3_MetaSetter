@@ -10,7 +10,7 @@ import com.mpatric.mp3agic.Mp3File;
 public class BackEnd {
 	
 	//Method that loops in directory and get files names
-	public void getFiles(String folerSource, String folderResult) throws BaseException, IOException, Exception{
+	public void getFiles(String folerSource, String folderResult, String album, int year, String genre) throws BaseException, IOException, Exception{
 		File folder = new File(folerSource);
 		File[] listOfFiles = folder.listFiles();
 		    for (int i = 0; i < listOfFiles.length; i++) {
