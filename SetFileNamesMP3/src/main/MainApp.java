@@ -133,14 +133,14 @@ public class MainApp {
 				String sourceFolder = lbl_setMeta_sourceFolder.getText().trim() +"/";
 				String resultFolder = lbl_setMeta_resultfolder.getText().trim() +"/";
 				String album = "";
-				int year = 0;
+				String year = "";
 				String genre = "";
 				
 				if(sourceFolder != "" || resultFolder != ""){
 					if(!tf_setMeta_year.getText().trim().isEmpty()){
 						if(isNumeric(tf_setMeta_year.getText().trim())){
 							if(Integer.parseInt(tf_setMeta_year.getText().trim()) > 0 && Integer.parseInt(tf_setMeta_year.getText().trim()) < 9999){
-								year = Integer.parseInt(tf_setMeta_year.getText().trim());
+								year = tf_setMeta_year.getText().trim();
 							}else{
 								JOptionPane.showMessageDialog(frame, "Please correct the year");
 							}
@@ -148,10 +148,12 @@ public class MainApp {
 							JOptionPane.showMessageDialog(frame, "Please correct the year");
 						}
 					}else{
-						year = 0;
+						year = "";
 					}
 					BackEnd backend  = new BackEnd();
 					try {
+						album = tf_setMeta_album.getText().trim();
+						genre = tf_setMeta_genre.getText().trim();
 						backend.getFiles(sourceFolder, resultFolder, album, year, genre);
 					} catch (BaseException e) {
 						JOptionPane.showMessageDialog(frame, e.getMessage());
@@ -213,7 +215,6 @@ public class MainApp {
 	
 	
 	public String fileChooser(){
-		int result;
 	    JFileChooser chooser;
 	    chooser = new JFileChooser(); 
 	    chooser.setCurrentDirectory(new java.io.File("C:/"));
