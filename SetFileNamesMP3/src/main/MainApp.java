@@ -41,6 +41,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
+import javax.swing.JRadioButton;
 
 
 
@@ -53,6 +54,7 @@ public class MainApp {
 	JLabel lbl_setMeta_resultfolder = new JLabel("");
 	JLabel lbl_setFile_sourceFolder = new JLabel("");
 	JLabel lbl_setFile_resultFolder = new JLabel("");
+	JRadioButton rdbtn_setMeta_setTagsVersion = new JRadioButton("Set tags to V2.3 (Windows can't read v2.4)",true);
 	
 	private JTextField tf_setMeta_album;
 	private JTextField tf_setMeta_year;
@@ -158,7 +160,7 @@ public class MainApp {
 					try {
 						album = tf_setMeta_album.getText().trim();
 						genre = tf_setMeta_genre.getText().trim();
-						backend.setMetaData(sourceFolder, resultFolder, album, year, genre);
+						backend.setMetaData(sourceFolder, resultFolder, album, year, genre, rdbtn_setMeta_setTagsVersion.isSelected());
 						JOptionPane.showMessageDialog(frame, "Complete");
 					} catch (BaseException e) {
 						JOptionPane.showMessageDialog(frame, e.getMessage());
@@ -202,8 +204,11 @@ public class MainApp {
 		tf_setMeta_genre = new JTextField();
 		tf_setMeta_genre.setColumns(10);
 		tf_setMeta_genre.setBounds(133, 167, 265, 22);
-		setMeta.add(tf_setMeta_genre);
+		setMeta.add(tf_setMeta_genre);		
 		
+		rdbtn_setMeta_setTagsVersion.setBounds(12, 204, 386, 25);
+		setMeta.add(rdbtn_setMeta_setTagsVersion);
+				
 		JPanel setFileName = new JPanel();
 		tabbedPane.addTab("Set file name", null, setFileName, null);
 		setFileName.setLayout(null);
