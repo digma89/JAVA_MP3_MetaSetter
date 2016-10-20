@@ -136,13 +136,15 @@ public class MainApp {
 		setMeta.add(btn_setMeta_run);
 		btn_setMeta_run.addActionListener(new ActionListener() {			
 			public void actionPerformed(ActionEvent arg0) {
-				String sourceFolder = lbl_setMeta_sourceFolder.getText().trim() +"/";
-				String resultFolder = lbl_setMeta_resultfolder.getText().trim() +"/";
+				String sourceFolder = lbl_setMeta_sourceFolder.getText().trim();
+				String resultFolder = lbl_setMeta_resultfolder.getText().trim();
 				String album = "";
 				String year = "";
 				String genre = "";
 				
 				if(sourceFolder != "" && resultFolder != ""){
+					sourceFolder += "/";
+					resultFolder += "/";
 					if(!tf_setMeta_year.getText().trim().isEmpty()){
 						if(isNumeric(tf_setMeta_year.getText().trim())){
 							if(Integer.parseInt(tf_setMeta_year.getText().trim()) > 0 && Integer.parseInt(tf_setMeta_year.getText().trim()) < 9999){
@@ -245,10 +247,12 @@ public class MainApp {
 		setFileName.add(btn_setFile_run);
 		btn_setFile_run.addActionListener(new ActionListener() {			
 			public void actionPerformed(ActionEvent arg0) {
-				String sourceFolder = lbl_setFile_sourceFolder.getText().trim() +"/";
-				String resultFolder = lbl_setFile_resultFolder.getText().trim() +"/";
+				String sourceFolder = lbl_setFile_sourceFolder.getText().trim();
+				String resultFolder = lbl_setFile_resultFolder.getText().trim();
 				
-				if(sourceFolder != "" && resultFolder != ""){					
+				if(sourceFolder != "" && resultFolder != ""){	
+					sourceFolder += "/";
+					resultFolder += "/";
 					BackEnd backend  = new BackEnd();
 					try {
 						backend.setFileNames(sourceFolder, resultFolder);
